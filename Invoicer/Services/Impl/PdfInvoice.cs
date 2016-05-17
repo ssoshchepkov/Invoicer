@@ -4,6 +4,7 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 using PdfSharp.Pdf.Security;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Invoicer.Services.Impl
@@ -66,6 +67,18 @@ namespace Invoicer.Services.Impl
 
         public void Save(string filename, string password = null)
         {
+            PdfDocumentRenderer renderer = CreateRenderer(password);
+            renderer.PdfDocument.Save(filename);
+        }
+
+        public void Save(Stream stream, bool closeStream = false, string password = null)
+        {
+            PdfDocumentRenderer renderer = CreateRenderer(password);
+            renderer.PdfDocument.Save(stream, closeStream);
+        }
+
+        private PdfDocumentRenderer CreateRenderer(string password = null)
+        {
             CreateDocument();
 
             PdfDocumentRenderer renderer = new PdfDocumentRenderer(true, PdfSharp.Pdf.PdfFontEmbedding.Always);
@@ -73,7 +86,8 @@ namespace Invoicer.Services.Impl
             renderer.RenderDocument();
             if (!string.IsNullOrEmpty(password))
                 SetPassword(renderer, password);
-            renderer.PdfDocument.Save(filename);
+
+            return renderer;
         }
 
         private void CreateDocument()

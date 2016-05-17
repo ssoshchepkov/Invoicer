@@ -129,5 +129,12 @@ namespace Invoicer.Services
                 filename = System.IO.Path.ChangeExtension(Invoice.Reference, "pdf");
            new PdfInvoice(Invoice).Save(filename, password);
         }
+
+
+        public void Save(System.IO.Stream stream, bool closeStream = false, string password = null)
+        {
+            if (stream == null) throw new ArgumentNullException("stream");
+            new PdfInvoice(Invoice).Save(stream, closeStream, password);
+        }
     }
 }
